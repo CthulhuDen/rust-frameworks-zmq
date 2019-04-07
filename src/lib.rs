@@ -1,12 +1,9 @@
-mod context;
+pub mod event;
 mod queue;
 
-pub use context::Context;
-pub use context::ZmqWorker;
-
-pub fn run(worker: &ZmqWorker, path: &[&str]) -> Result<String, String> {
+pub fn run(sender: &event::Sender, path: &[&str]) -> Result<(), String> {
     match path {
-        ["queue", name] => queue::queue(worker, name),
+        ["queue", name] => queue::queue(sender, name),
         _ => Err(String::from("invalid request")),
     }
 }

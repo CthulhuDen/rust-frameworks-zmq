@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message Event {
+  sfixed32 timestamp = 1;
+  reserved 2; // maybe add float for subsecond precision
+  oneof subject {
+    Visit visit = 3;
+  }
+}
+
+message Visit {
+  string url = 1;
+  int32 param = 2;
+}

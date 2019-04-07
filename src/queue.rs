@@ -1,20 +1,14 @@
-use crate::context::ZmqWorker;
+use crate::event::{Sender, Subject, Visit};
 
-pub trait Queue {
-    fn push(&self, msg: &[u8]);
-}
-
-impl Queue for ZmqWorker {
-    fn push(&self, msg: &[u8]) {
-        self.send(msg.to_owned().into_boxed_slice());
+pub fn queue(sender: &crate::event::Sender, name: &str) -> Result<(), String> {
+    if name != "zmq" {
+        return Err(String::from("unknown queue type"));
     }
-}
-
-pub fn queue(worker: &ZmqWorker, name: &str) -> Result<String, String> {
-    let queue: &Queue = match name {
-        "zmq" => worker,
-        _ => return Err(String::from("unknown queue type")),
-    };
-    queue.push("visit".as_bytes());
-    Ok(String::from(""))
+    for i in 0..100 {
+        sender.send(Subject::Visit(Visit {
+            url: std::borrow::Cow::from("unknown"),
+            param: i,
+        }));
+    }
+    Ok(())
 }
